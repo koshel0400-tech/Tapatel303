@@ -1,0 +1,15 @@
+{
+  "short_name": "Тапатель",
+  "name": "Тапатель 303",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#ffeb3b",
+  "theme_color": "#ff9800"
+}
