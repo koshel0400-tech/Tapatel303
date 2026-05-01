@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ТАПАТЕЛЬ 303</title>
-    <link rel="manifest" href="manifest.json">
+<link rel="manifest" href="manifest.json">
     <style>
         /* Все стили остаются без изменений до .stats */
         :root {
@@ -23,6 +23,8 @@
             --ad-green: #34a853;
             --danger-red: #f44336;
             --danger-dark: #d32f2f;
+            --premium-gold: #FFD700;
+            --mystic-purple: #9C27B0;
         }
         
         body {
@@ -695,6 +697,30 @@
             margin-top: 15px;
         }
         
+        .premium-upgrade {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.3), rgba(255, 193, 7, 0.3));
+            border: 2px solid var(--premium-gold);
+            animation: premiumGlow 2s infinite;
+        }
+        
+        @keyframes premiumGlow {
+            0% { box-shadow: 0 0 5px rgba(255, 215, 0, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.8); }
+            100% { box-shadow: 0 0 5px rgba(255, 215, 0, 0.5); }
+        }
+        
+        .mystic-upgrade {
+            background: linear-gradient(135deg, rgba(156, 39, 176, 0.2), rgba(123, 31, 162, 0.2));
+            border: 2px solid var(--mystic-purple);
+            animation: mysticGlow 3s infinite;
+        }
+        
+        @keyframes mysticGlow {
+            0% { box-shadow: 0 0 5px rgba(156, 39, 176, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(156, 39, 176, 0.8); }
+            100% { box-shadow: 0 0 5px rgba(156, 39, 176, 0.5); }
+        }
+        
         @keyframes adPulse {
             0% { box-shadow: 0 0 0 0 rgba(66, 133, 244, 0.7); }
             70% { box-shadow: 0 0 0 10px rgba(66, 133, 244, 0); }
@@ -712,6 +738,19 @@
             border-radius: 12px;
             font-weight: bold;
             box-shadow: 0 3px 10px rgba(234, 67, 53, 0.3);
+        }
+        
+        .premium-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: linear-gradient(90deg, #FFD700, #FFA000);
+            color: #333;
+            font-size: 0.8rem;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: bold;
+            box-shadow: 0 3px 10px rgba(255, 215, 0, 0.5);
         }
         
         .upgrade-name {
@@ -2604,8 +2643,17 @@
             let users = {};
             let loginStartTime = null;
             
-            // Уменьшенный массив с улучшениями (убраны Тап-сингулярность и все после него)
+            // НОВЫЕ ПЕРЕМЕННЫЕ ДЛЯ ДОПОЛНИТЕЛЬНЫХ ФУНКЦИЙ
+            let clickMultiplier = 1;
+            let luckyChance = 0;
+            let comboCount = 0;
+            let lastClickTime = 0;
+            let isVibrationEnabled = true;
+            let autoClickerSpeed = 1000;
+            
+            // Улучшения с добавлением 10 новых
             const upgrades = [
+                // Оригинальные улучшения
                 {
                     id: 1,
                     name: "Усиленный палец",
@@ -2766,6 +2814,117 @@
                     level: 0,
                     maxLevel: 2,
                     effect: "divineFinger"
+                },
+                // 10 НОВЫХ УЛУЧШЕНИЙ
+                {
+                    id: 17,
+                    name: "🔥 Плазменный тапер",
+                    description: "×15 тапов за клик, поджигает соседние молекулы",
+                    baseCost: 1500000,
+                    cost: 1500000,
+                    level: 0,
+                    maxLevel: 3,
+                    effect: "plasmaFinger",
+                    isPremium: true
+                },
+                {
+                    id: 18,
+                    name: "🌀 Гравитационный колодец",
+                    description: "Притягивает тапы из параллельных вселенных (+50/сек)",
+                    baseCost: 3000000,
+                    cost: 3000000,
+                    level: 0,
+                    maxLevel: 4,
+                    effect: "gravityWell",
+                    isMystic: true
+                },
+                {
+                    id: 19,
+                    name: "⚡ Молниевый клик",
+                    description: "Шанс 30% на молнию, дающую ×25 тапов",
+                    baseCost: 2000000,
+                    cost: 2000000,
+                    level: 0,
+                    maxLevel: 3,
+                    effect: "lightningClick",
+                    isPremium: true
+                },
+                {
+                    id: 20,
+                    name: "🌌 Космический вакуум",
+                    description: "Всасывает тапы из космоса (+100/сек)",
+                    baseCost: 5000000,
+                    cost: 5000000,
+                    level: 0,
+                    maxLevel: 3,
+                    effect: "cosmicVacuum",
+                    isMystic: true
+                },
+                {
+                    id: 21,
+                    name: "💎 Алмазный палец",
+                    description: "×50 тапов, неуязвим к износу",
+                    baseCost: 10000000,
+                    cost: 10000000,
+                    level: 0,
+                    maxLevel: 2,
+                    effect: "diamondFinger",
+                    isPremium: true
+                },
+                {
+                    id: 22,
+                    name: "🧬 Мутагенный тапер",
+                    description: "Мутирует тапы, создавая цепную реакцию",
+                    baseCost: 7500000,
+                    cost: 7500000,
+                    level: 0,
+                    maxLevel: 4,
+                    effect: "mutagenicTapper",
+                    isMystic: true
+                },
+                {
+                    id: 23,
+                    name: "🎰 Квантовый джекпот",
+                    description: "Шанс 5% на джекпот (×100 тапов)",
+                    baseCost: 15000000,
+                    cost: 15000000,
+                    level: 0,
+                    maxLevel: 2,
+                    effect: "quantumJackpot",
+                    isPremium: true
+                },
+                {
+                    id: 24,
+                    name: "🔮 Хроно-тапер",
+                    description: "Замедляет время, утраивая авто-тапы",
+                    baseCost: 25000000,
+                    cost: 25000000,
+                    level: 0,
+                    maxLevel: 3,
+                    effect: "chronoTapper",
+                    isMystic: true
+                },
+                {
+                    id: 25,
+                    name: "🌟 Сверхновая",
+                    description: "Взрыв сверхновой: +1000 тапов instantly",
+                    baseCost: 50000000,
+                    cost: 50000000,
+                    level: 0,
+                    maxLevel: 1,
+                    effect: "supernova",
+                    isPremium: true
+                },
+                {
+                    id: 26,
+                    name: "🕳️ Черная дыра",
+                    description: "Поглощает всё: ×1000 тапов/сек",
+                    baseCost: 100000000,
+                    cost: 100000000,
+                    level: 0,
+                    maxLevel: 1,
+                    effect: "blackHole",
+                    isMystic: true
                 }
             ];
             
@@ -2946,6 +3105,25 @@
                     if (divineFingerUpgrade && divineFingerUpgrade.level > 0 && Math.random() < 0.5) {
                         addedTaps *= 5;
                         showNotification(`БОЖЕСТВЕННАЯ СИЛА! ×5 тапов! 👑`, '#FF5722');
+                    }
+                    
+                    // Новые улучшения (простые эффекты)
+                    const plasmaUpgrade = upgrades.find(u => u.effect === 'plasmaFinger');
+                    if (plasmaUpgrade && plasmaUpgrade.level > 0) addedTaps *= (1 + 15 * plasmaUpgrade.level);
+                    
+                    const lightningUpgrade = upgrades.find(u => u.effect === 'lightningClick');
+                    if (lightningUpgrade && lightningUpgrade.level > 0 && Math.random() < 0.30) {
+                        addedTaps *= 25;
+                        showNotification(`МОЛНИЯ! ×25 тапов! ⚡`, '#FFC107');
+                    }
+                    
+                    const diamondUpgrade = upgrades.find(u => u.effect === 'diamondFinger');
+                    if (diamondUpgrade && diamondUpgrade.level > 0) addedTaps *= (50 * diamondUpgrade.level);
+                    
+                    const jackpotUpgrade = upgrades.find(u => u.effect === 'quantumJackpot');
+                    if (jackpotUpgrade && jackpotUpgrade.level > 0 && Math.random() < 0.05) {
+                        addedTaps *= 100;
+                        showNotification(`ДЖЕКПОТ! ×100 тапов! 🎰`, '#FFD700');
                     }
                     
                     tapCount += addedTaps;
@@ -4789,11 +4967,24 @@
                 upgrades.forEach(upgrade => {
                     const upgradeElement = document.createElement('div');
                     const isAdUpgrade = upgrade.id === 7;
+                    const isPremium = upgrade.isPremium;
+                    const isMystic = upgrade.isMystic;
                     const levelText = isAdUpgrade ? `Просмотров: ${upgrade.level}` : `Ур. ${upgrade.level}/${upgrade.maxLevel}`;
                     
-                    upgradeElement.className = `upgrade-item ${upgrade.level > 0 ? 'purchased' : ''} ${isAdUpgrade ? 'ad-upgrade' : ''}`;
+                    let className = 'upgrade-item';
+                    if (upgrade.level > 0) className += ' purchased';
+                    if (isAdUpgrade) className += ' ad-upgrade';
+                    if (isPremium) className += ' premium-upgrade';
+                    if (isMystic) className += ' mystic-upgrade';
+                    
+                    let badge = '';
+                    if (isAdUpgrade) badge = '<div class="ad-badge">РЕКЛАМА</div>';
+                    if (isPremium) badge = '<div class="premium-badge">PREMIUM</div>';
+                    if (isMystic) badge = '<div class="premium-badge" style="background: linear-gradient(90deg, #9C27B0, #7B1FA2); color: white;">МИСТИК</div>';
+                    
+                    upgradeElement.className = className;
                     upgradeElement.innerHTML = `
-                        ${isAdUpgrade ? '<div class="ad-badge">РЕКЛАМА</div>' : ''}
+                        ${badge}
                         <div class="upgrade-name">${upgrade.name}</div>
                         <div class="upgrade-description">${upgrade.description}</div>
                         <div class="upgrade-cost">
