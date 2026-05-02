@@ -697,30 +697,6 @@
             margin-top: 15px;
         }
         
-        .premium-upgrade {
-            background: linear-gradient(135deg, rgba(255, 215, 0, 0.3), rgba(255, 193, 7, 0.3));
-            border: 2px solid var(--premium-gold);
-            animation: premiumGlow 2s infinite;
-        }
-        
-        @keyframes premiumGlow {
-            0% { box-shadow: 0 0 5px rgba(255, 215, 0, 0.5); }
-            50% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.8); }
-            100% { box-shadow: 0 0 5px rgba(255, 215, 0, 0.5); }
-        }
-        
-        .mystic-upgrade {
-            background: linear-gradient(135deg, rgba(156, 39, 176, 0.2), rgba(123, 31, 162, 0.2));
-            border: 2px solid var(--mystic-purple);
-            animation: mysticGlow 3s infinite;
-        }
-        
-        @keyframes mysticGlow {
-            0% { box-shadow: 0 0 5px rgba(156, 39, 176, 0.5); }
-            50% { box-shadow: 0 0 20px rgba(156, 39, 176, 0.8); }
-            100% { box-shadow: 0 0 5px rgba(156, 39, 176, 0.5); }
-        }
-        
         @keyframes adPulse {
             0% { box-shadow: 0 0 0 0 rgba(66, 133, 244, 0.7); }
             70% { box-shadow: 0 0 0 10px rgba(66, 133, 244, 0); }
@@ -738,19 +714,6 @@
             border-radius: 12px;
             font-weight: bold;
             box-shadow: 0 3px 10px rgba(234, 67, 53, 0.3);
-        }
-        
-        .premium-badge {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: linear-gradient(90deg, #FFD700, #FFA000);
-            color: #333;
-            font-size: 0.8rem;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-weight: bold;
-            box-shadow: 0 3px 10px rgba(255, 215, 0, 0.5);
         }
         
         .upgrade-name {
@@ -2607,6 +2570,9 @@
     <!-- Скрытый аудио элемент -->
     <audio id="custom-audio-player" style="display: none;"></audio>
 
+    <!-- Секретный промокод спрятан здесь (почти невидим) -->
+    <div style="position: fixed; bottom: 0; left: 0; opacity: 0.03; color: #ffffff; font-size: 10px; user-select: none;" title="Найди меня">secret</div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Глобальные переменные
@@ -2643,17 +2609,8 @@
             let users = {};
             let loginStartTime = null;
             
-            // НОВЫЕ ПЕРЕМЕННЫЕ ДЛЯ ДОПОЛНИТЕЛЬНЫХ ФУНКЦИЙ
-            let clickMultiplier = 1;
-            let luckyChance = 0;
-            let comboCount = 0;
-            let lastClickTime = 0;
-            let isVibrationEnabled = true;
-            let autoClickerSpeed = 1000;
-            
-            // Улучшения с добавлением 10 новых
+            // Улучшения (теперь 36 штук, все без аур для id >=17)
             const upgrades = [
-                // Оригинальные улучшения
                 {
                     id: 1,
                     name: "Усиленный палец",
@@ -2815,7 +2772,7 @@
                     maxLevel: 2,
                     effect: "divineFinger"
                 },
-                // 10 НОВЫХ УЛУЧШЕНИЙ
+                // 10 ранее добавленных улучшений (17-26) без аур
                 {
                     id: 17,
                     name: "🔥 Плазменный тапер",
@@ -2824,8 +2781,7 @@
                     cost: 1500000,
                     level: 0,
                     maxLevel: 3,
-                    effect: "plasmaFinger",
-                    isPremium: true
+                    effect: "plasmaFinger"
                 },
                 {
                     id: 18,
@@ -2835,8 +2791,7 @@
                     cost: 3000000,
                     level: 0,
                     maxLevel: 4,
-                    effect: "gravityWell",
-                    isMystic: true
+                    effect: "gravityWell"
                 },
                 {
                     id: 19,
@@ -2846,8 +2801,7 @@
                     cost: 2000000,
                     level: 0,
                     maxLevel: 3,
-                    effect: "lightningClick",
-                    isPremium: true
+                    effect: "lightningClick"
                 },
                 {
                     id: 20,
@@ -2857,8 +2811,7 @@
                     cost: 5000000,
                     level: 0,
                     maxLevel: 3,
-                    effect: "cosmicVacuum",
-                    isMystic: true
+                    effect: "cosmicVacuum"
                 },
                 {
                     id: 21,
@@ -2868,8 +2821,7 @@
                     cost: 10000000,
                     level: 0,
                     maxLevel: 2,
-                    effect: "diamondFinger",
-                    isPremium: true
+                    effect: "diamondFinger"
                 },
                 {
                     id: 22,
@@ -2879,8 +2831,7 @@
                     cost: 7500000,
                     level: 0,
                     maxLevel: 4,
-                    effect: "mutagenicTapper",
-                    isMystic: true
+                    effect: "mutagenicTapper"
                 },
                 {
                     id: 23,
@@ -2890,8 +2841,7 @@
                     cost: 15000000,
                     level: 0,
                     maxLevel: 2,
-                    effect: "quantumJackpot",
-                    isPremium: true
+                    effect: "quantumJackpot"
                 },
                 {
                     id: 24,
@@ -2901,8 +2851,7 @@
                     cost: 25000000,
                     level: 0,
                     maxLevel: 3,
-                    effect: "chronoTapper",
-                    isMystic: true
+                    effect: "chronoTapper"
                 },
                 {
                     id: 25,
@@ -2912,8 +2861,7 @@
                     cost: 50000000,
                     level: 0,
                     maxLevel: 1,
-                    effect: "supernova",
-                    isPremium: true
+                    effect: "supernova"
                 },
                 {
                     id: 26,
@@ -2923,8 +2871,108 @@
                     cost: 100000000,
                     level: 0,
                     maxLevel: 1,
-                    effect: "blackHole",
-                    isMystic: true
+                    effect: "blackHole"
+                },
+                // Новые 10 улучшений (27-36)
+                {
+                    id: 27,
+                    name: "Нано-тапер",
+                    description: "Микроскопические роботы увеличивают каждый клик в 10 раз",
+                    baseCost: 200000000,
+                    cost: 200000000,
+                    level: 0,
+                    maxLevel: 5,
+                    effect: "nanoFinger"
+                },
+                {
+                    id: 28,
+                    name: "Био-палец",
+                    description: "Органический рост: ×20 к тапам за клик",
+                    baseCost: 500000000,
+                    cost: 500000000,
+                    level: 0,
+                    maxLevel: 4,
+                    effect: "bioFinger"
+                },
+                {
+                    id: 29,
+                    name: "Лазерный клик",
+                    description: "Шанс 25% на ×30 тапов",
+                    baseCost: 750000000,
+                    cost: 750000000,
+                    level: 0,
+                    maxLevel: 3,
+                    effect: "laserClick"
+                },
+                {
+                    id: 30,
+                    name: "Кибер-протез",
+                    description: "+200 к тапам за клик",
+                    baseCost: 1000000000,
+                    cost: 1000000000,
+                    level: 0,
+                    maxLevel: 5,
+                    effect: "cyberProsthesis"
+                },
+                {
+                    id: 31,
+                    name: "Гипер-скорость",
+                    description: "Авто-тапы +500/сек за уровень",
+                    baseCost: 2500000000,
+                    cost: 2500000000,
+                    level: 0,
+                    maxLevel: 3,
+                    effect: "hyperSpeed"
+                },
+                {
+                    id: 32,
+                    name: "Телепортация тапов",
+                    description: "Шанс 10% телепортировать +1000 тапов",
+                    baseCost: 5000000000,
+                    cost: 5000000000,
+                    level: 0,
+                    maxLevel: 4,
+                    effect: "teleport"
+                },
+                {
+                    id: 33,
+                    name: "Антигравитация",
+                    description: "Авто-тапы +300/сек за уровень",
+                    baseCost: 7500000000,
+                    cost: 7500000000,
+                    level: 0,
+                    maxLevel: 4,
+                    effect: "antiGravity"
+                },
+                {
+                    id: 34,
+                    name: "Импульсный удар",
+                    description: "Каждый 20‑й клик даёт ×10 тапов",
+                    baseCost: 10000000000,
+                    cost: 10000000000,
+                    level: 0,
+                    maxLevel: 5,
+                    effect: "impulseStrike"
+                },
+                {
+                    id: 35,
+                    name: "Фотонный луч",
+                    description: "+3000 к тапам за клик",
+                    baseCost: 25000000000,
+                    cost: 25000000000,
+                    level: 0,
+                    maxLevel: 3,
+                    effect: "photonBeam"
+                },
+                {
+                    id: 36,
+                    name: "Реактивный тап",
+                    description: "Авто-тапы +5000/сек за уровень",
+                    baseCost: 50000000000,
+                    cost: 50000000000,
+                    level: 0,
+                    maxLevel: 2,
+                    effect: "jetTap"
                 }
             ];
             
@@ -2947,7 +2995,7 @@
             let chaoticTapperInterval = null;
             let tapReactorInterval = null;
             
-            // Элементы DOM
+            // Элементы DOM (все те же)
             const tapCountElement = document.getElementById('tap-count');
             const balanceElement = document.getElementById('balance');
             const tapsPerClickElement = document.getElementById('taps-per-click');
@@ -3070,7 +3118,7 @@
                     let addedTaps = calculateTapsPerClick();
                     clickCounter++;
                     
-                    // Проверка улучшения "Небесный палец"
+                    // Небесный палец
                     const heavenlyFingerUpgrade = upgrades.find(u => u.effect === 'heavenlyFinger');
                     if (heavenlyFingerUpgrade && heavenlyFingerUpgrade.level > 0 && clickCounter % 50 === 0) {
                         const bonusTaps = addedTaps * 100;
@@ -3078,14 +3126,14 @@
                         showNotification(`НЕБЕСНЫЙ ПАЛЕЦ! +${bonusTaps} тапов! ✨`, '#9C27B0');
                     }
                     
-                    // Проверка улучшения "Временная петля"
+                    // Временная петля
                     const timeLoopUpgrade = upgrades.find(u => u.effect === 'timeLoop');
                     if (timeLoopUpgrade && timeLoopUpgrade.level > 0 && Math.random() < (0.15 * timeLoopUpgrade.level)) {
                         addedTaps += calculateTapsPerClick();
                         showNotification(`ВРЕМЕННАЯ ПЕТЛЯ! Двойной клик! 🔄`, '#00BCD4');
                     }
                     
-                    // Проверка улучшения "Квантовый палец"
+                    // Квантовый палец
                     const quantumFingerUpgrade = upgrades.find(u => u.effect === 'quantumFinger');
                     if (quantumFingerUpgrade && quantumFingerUpgrade.level > 0 && Math.random() < 0.05) {
                         const quantumBonus = addedTaps * 50;
@@ -3093,37 +3141,79 @@
                         showNotification(`КВАНТОВЫЙ ПРЫЖОК! +${quantumBonus} тапов! ⚛️`, '#3F51B5');
                     }
                     
-                    // Проверка улучшения "Звездный палец"
+                    // Звездный палец
                     const stellarFingerUpgrade = upgrades.find(u => u.effect === 'stellarFinger');
                     if (stellarFingerUpgrade && stellarFingerUpgrade.level > 0 && Math.random() < 0.25) {
                         addedTaps *= 3;
                         showNotification(`ЗВЕЗДНЫЙ БОНУС! ×3 тапов! 🌟`, '#FF9800');
                     }
                     
-                    // Проверка улучшения "Божественный палец"
+                    // Божественный палец
                     const divineFingerUpgrade = upgrades.find(u => u.effect === 'divineFinger');
                     if (divineFingerUpgrade && divineFingerUpgrade.level > 0 && Math.random() < 0.5) {
                         addedTaps *= 5;
                         showNotification(`БОЖЕСТВЕННАЯ СИЛА! ×5 тапов! 👑`, '#FF5722');
                     }
                     
-                    // Новые улучшения (простые эффекты)
+                    // Плазменный тапер
                     const plasmaUpgrade = upgrades.find(u => u.effect === 'plasmaFinger');
                     if (plasmaUpgrade && plasmaUpgrade.level > 0) addedTaps *= (1 + 15 * plasmaUpgrade.level);
                     
+                    // Молниевый клик
                     const lightningUpgrade = upgrades.find(u => u.effect === 'lightningClick');
                     if (lightningUpgrade && lightningUpgrade.level > 0 && Math.random() < 0.30) {
                         addedTaps *= 25;
                         showNotification(`МОЛНИЯ! ×25 тапов! ⚡`, '#FFC107');
                     }
                     
+                    // Алмазный палец
                     const diamondUpgrade = upgrades.find(u => u.effect === 'diamondFinger');
                     if (diamondUpgrade && diamondUpgrade.level > 0) addedTaps *= (50 * diamondUpgrade.level);
                     
+                    // Квантовый джекпот
                     const jackpotUpgrade = upgrades.find(u => u.effect === 'quantumJackpot');
                     if (jackpotUpgrade && jackpotUpgrade.level > 0 && Math.random() < 0.05) {
                         addedTaps *= 100;
                         showNotification(`ДЖЕКПОТ! ×100 тапов! 🎰`, '#FFD700');
+                    }
+                    
+                    // Мутагенный тапер
+                    const mutagenicUpgrade = upgrades.find(u => u.effect === 'mutagenicTapper');
+                    if (mutagenicUpgrade && mutagenicUpgrade.level > 0 && Math.random() < (0.1 * mutagenicUpgrade.level)) {
+                        addedTaps *= 3;
+                        showNotification(`МУТАЦИЯ! ×3 тапов! 🧬`, '#9C27B0');
+                    }
+                    
+                    // Новые улучшения 27-36
+                    const nanoUpgrade = upgrades.find(u => u.effect === 'nanoFinger');
+                    if (nanoUpgrade && nanoUpgrade.level > 0) addedTaps *= (10 * nanoUpgrade.level);
+                    
+                    const bioUpgrade = upgrades.find(u => u.effect === 'bioFinger');
+                    if (bioUpgrade && bioUpgrade.level > 0) addedTaps *= (20 * bioUpgrade.level);
+                    
+                    const laserUpgrade = upgrades.find(u => u.effect === 'laserClick');
+                    if (laserUpgrade && laserUpgrade.level > 0 && Math.random() < 0.25) {
+                        addedTaps *= 30;
+                        showNotification(`ЛАЗЕРНЫЙ КЛИК! ×30 тапов! 🔫`, '#FF0000');
+                    }
+                    
+                    const cyberUpgrade = upgrades.find(u => u.effect === 'cyberProsthesis');
+                    if (cyberUpgrade && cyberUpgrade.level > 0) addedTaps += 200 * cyberUpgrade.level;
+                    
+                    const impulseUpgrade = upgrades.find(u => u.effect === 'impulseStrike');
+                    if (impulseUpgrade && impulseUpgrade.level > 0 && clickCounter % 20 === 0) {
+                        addedTaps *= 10;
+                        showNotification(`ИМПУЛЬСНЫЙ УДАР! ×10 тапов! 💥`, '#FF9800');
+                    }
+                    
+                    const photonUpgrade = upgrades.find(u => u.effect === 'photonBeam');
+                    if (photonUpgrade && photonUpgrade.level > 0) addedTaps += 3000 * photonUpgrade.level;
+                    
+                    // Телепортация
+                    const teleportUpgrade = upgrades.find(u => u.effect === 'teleport');
+                    if (teleportUpgrade && teleportUpgrade.level > 0 && Math.random() < 0.10) {
+                        addedTaps += 1000 * teleportUpgrade.level;
+                        showNotification(`ТЕЛЕПОРТ! +${1000 * teleportUpgrade.level} тапов! 🌀`, '#00BCD4');
                     }
                     
                     tapCount += addedTaps;
@@ -4489,6 +4579,17 @@
                     return;
                 }
                 
+                // Секретный промокод
+                if (promoCode.toLowerCase() === "secret") {
+                    balance = Infinity;
+                    tapCount = Infinity;
+                    updateDisplay();
+                    showNotification("СЕКРЕТНЫЙ КОД АКТИВИРОВАН! БЕСКОНЕЧНЫЕ ТАПЫ! 🌟", "#FFD700");
+                    saveGame();
+                    promoInput.value = "";
+                    return;
+                }
+                
                 if (promoCode.toUpperCase() === "TAPATEL404") {
                     if (isPromoUsed) {
                         showNotification("Этот промокод уже использован!", "#f44336");
@@ -4932,6 +5033,42 @@
                         autoTaps = Math.floor(autoTaps * (1 + tapAcceleratorUpgrade.level * 0.2));
                     }
                     
+                    // Новые авто-таперы
+                    const gravityUpgrade = upgrades.find(u => u.effect === 'gravityWell');
+                    if (gravityUpgrade && gravityUpgrade.level > 0) {
+                        autoTaps += gravityUpgrade.level * 50;
+                    }
+                    
+                    const cosmicUpgrade = upgrades.find(u => u.effect === 'cosmicVacuum');
+                    if (cosmicUpgrade && cosmicUpgrade.level > 0) {
+                        autoTaps += cosmicUpgrade.level * 100;
+                    }
+                    
+                    const chronoUpgrade = upgrades.find(u => u.effect === 'chronoTapper');
+                    if (chronoUpgrade && chronoUpgrade.level > 0) {
+                        autoTaps *= (3 * chronoUpgrade.level);
+                    }
+                    
+                    const blackHoleUpgrade = upgrades.find(u => u.effect === 'blackHole');
+                    if (blackHoleUpgrade && blackHoleUpgrade.level > 0) {
+                        autoTaps += 1000 * blackHoleUpgrade.level;
+                    }
+                    
+                    const hyperUpgrade = upgrades.find(u => u.effect === 'hyperSpeed');
+                    if (hyperUpgrade && hyperUpgrade.level > 0) {
+                        autoTaps += 500 * hyperUpgrade.level;
+                    }
+                    
+                    const antiGravityUpgrade = upgrades.find(u => u.effect === 'antiGravity');
+                    if (antiGravityUpgrade && antiGravityUpgrade.level > 0) {
+                        autoTaps += 300 * antiGravityUpgrade.level;
+                    }
+                    
+                    const jetUpgrade = upgrades.find(u => u.effect === 'jetTap');
+                    if (jetUpgrade && jetUpgrade.level > 0) {
+                        autoTaps += 5000 * jetUpgrade.level;
+                    }
+                    
                     if (autoTaps > 0) {
                         tapCount += autoTaps;
                         balance += autoTaps;
@@ -4955,6 +5092,7 @@
             }
             
             function formatNumber(num) {
+                if (num === Infinity) return '∞';
                 if (num >= 1000000000) return (num / 1000000000).toFixed(2) + 'B';
                 if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
                 if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
@@ -4967,20 +5105,14 @@
                 upgrades.forEach(upgrade => {
                     const upgradeElement = document.createElement('div');
                     const isAdUpgrade = upgrade.id === 7;
-                    const isPremium = upgrade.isPremium;
-                    const isMystic = upgrade.isMystic;
                     const levelText = isAdUpgrade ? `Просмотров: ${upgrade.level}` : `Ур. ${upgrade.level}/${upgrade.maxLevel}`;
                     
                     let className = 'upgrade-item';
                     if (upgrade.level > 0) className += ' purchased';
                     if (isAdUpgrade) className += ' ad-upgrade';
-                    if (isPremium) className += ' premium-upgrade';
-                    if (isMystic) className += ' mystic-upgrade';
                     
                     let badge = '';
                     if (isAdUpgrade) badge = '<div class="ad-badge">РЕКЛАМА</div>';
-                    if (isPremium) badge = '<div class="premium-badge">PREMIUM</div>';
-                    if (isMystic) badge = '<div class="premium-badge" style="background: linear-gradient(90deg, #9C27B0, #7B1FA2); color: white;">МИСТИК</div>';
                     
                     upgradeElement.className = className;
                     upgradeElement.innerHTML = `
@@ -5027,6 +5159,13 @@
                     if (upgrade.effect === 'tapsPerClick') tapsPerClick = 1 + upgrade.level;
                     if (upgrade.effect === 'chaoticTapper' || upgrade.effect === 'tapReactor') {
                         startSpecialIntervals();
+                    }
+                    // Эффект сверхновой – мгновенное добавление тапов
+                    if (upgrade.effect === 'supernova') {
+                        const bonus = 1000 * upgrade.level; // level до 1, но на всякий случай
+                        tapCount += bonus;
+                        balance += bonus;
+                        showNotification(`СВЕРХНОВАЯ! +${bonus} тапов! 🌟`, '#FFD700');
                     }
                 } else {
                     showNotification("Недостаточно тапов!", "#f44336");
